@@ -9,3 +9,15 @@ const KRAKEN_WITHDRAWAL = 0.0005
 const BINANCE_API = process.env.NEXT_BINANCE_API;
 const OKX_API = process.env.NEXT_OKX_API;
 const KRAKEN_API = process.env.NEXT_KRAKEN_API;
+
+export {
+    BINANCE_API,
+    OKX_API,
+    KRAKEN_API,
+    BINANCE_FEE,
+    OKX_FEE,
+    KRAKEN_FEE,
+    BINANCE_WITHDRAWAL,
+    OKX_WITHDRAWAL,
+    KRAKEN_WITHDRAWAL
+}

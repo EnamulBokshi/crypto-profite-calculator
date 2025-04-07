@@ -1,103 +1,110 @@
+"use client"
+import { calculateProfite, calculateProfitePercentage } from "@/lib/actions/calculateProfite";
 import Image from "next/image";
+import { getBinancePrice } from "@/lib/actions/getBinancePrice";
+import { getOKXPrice } from "@/lib/actions/getOkxPrice";
+import { getKrakenPrice } from "@/lib/actions/getKrakenPrice";
+import { BINANCE_FEE,
+  OKX_FEE,
+  KRAKEN_FEE,
+  BINANCE_WITHDRAWAL,
+  OKX_WITHDRAWAL,
+  KRAKEN_WITHDRAWAL } from "@/const";
 
+import { useState } from "react";
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+  const[amount, setAmount] = useState<number>(0);
+  const [results,setResults] = useState<{profit: number, profitPercentage:number}[]| null>(null);
+  const calculateArbitrage = async (exchange1Price: number, exchange2Price: number, amount: number) => {
+    const buyPrice = exchange1Price;
+    const sellPrice = exchange2Price;
+    const buyFee = 0.001; // Example fee for buying
+    const sellFee = 0.001; // Example fee for selling
+    const withdrawalFee = 0.0005; // Example withdrawal fee
+    const profit = await calculateProfite(buyPrice, sellPrice, buyFee, sellFee, withdrawalFee, amount);
+    const profitPercentage = await calculateProfitePercentage(buyPrice, sellPrice, buyFee, sellFee, withdrawalFee, amount);
+    return { profit, profitPercentage };
+  };
+  const handleCalculate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const buPrice = await getBinancePrice();
+    const okxPrice = await getOKXPrice();
+    const krakenPrice = await getKrakenPrice();
+    console.log("Binance Price:", buPrice);
+    console.log("OKX Price:", okxPrice);
+    console.log("Kraken Price:", krakenPrice);
+    console.log("Amount:", amount);
+    // if (buPrice && okxPrice && amount > 0 ){
+    //   const { profit, profitPercentage } = await calculateArbitrage(buPrice, okxPrice, amount);
+    //   console.log(`Profit: ${profit}, Profit Percentage: ${profitPercentage}`);
+    //   // Display results in the UI
+    //   setResults([{ profit, profitPercentage }]);
+    // } else {
+    //   console.error("Invalid input values");
+    // }
+  };
+  
+  return (
+    <>
+    <main className="flex min-h-screen flex-col items-center justify-between p-24">
+      <h1 className="text-4xl font-bold text-center">Crypto Arbitrage Calculator</h1>
+      <div className="mt-10">
+        <Image
+          src="/crypto-arbitrage.png"
+          alt="Crypto Arbitrage"
+          width={500}
+          height={300}
+        />
+      </div>
+      <p className="mt-5 text-lg text-center">
+        Compare prices across exchanges and calculate potential profits.
+      </p>
+
+      {/* <CalculatorUI />
+       */}
+       <div className="mt-10">
+        <form className="space-y-4" onSubmit={handleCalculate}>
+          <div className="mb-4 flex flex-col gap-4">
+            <label htmlFor="exchange1" className="block text-sm font-medium text-gray-700">
+              Exchange 1 Price:
+            </label>
+            <input
+              type="number"
+               min={0}
+              value={amount}
+              onChange={(e) => setAmount(parseFloat(e.target.value))}
+              className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-opacity-50 bg-gray-300 p-2 text-gray-800"
             />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+            <button type="submit" className="py-2 rounded-lg bg-blue-600">Calculate</button>
+          </div>
+        </form>
+        <div className="rounded-lg shadow-lg p-6 bg-white text-gray-800">
+        <h2>Results: </h2>
+          <div>
+            {
+              results && results.length > 0 ? (
+                <>
+                  <p className="text-green-600">Profit: {results[0].profit}</p>
+                  <p className="text-green-600">Profit Percentage: {results[0].profitPercentage}%</p>
+                </>
+              ) : (
+                <p className="text-red-600">No results available</p>
+              )
+            }
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+
+       </div>
+
+
+    </main>
+  <footer className="mt-10">
+    <p className="text-sm text-center">
+      &copy; 2023 Crypto Arbitrage Calculator. All rights reserved.
+    </p>
+  </footer> 
+    </>
+    
   );
 }
