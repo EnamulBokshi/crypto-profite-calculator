@@ -1,0 +1,11 @@
+const BINANCE_FEE = 0.001;
+const OKX_FEE = 0.001
+const KRAKEN_FEE = 0.002
+
+const BINANCE_WITHDRAWAL = 0.0005
+const OKX_WITHDRAWAL = 0.0005
+const KRAKEN_WITHDRAWAL = 0.0005
+
+const BINANCE_API = process.env.NEXT_BINANCE_API;
+const OKX_API = process.env.NEXT_OKX_API;
+const KRAKEN_API = process.env.NEXT_KRAKEN_API;
