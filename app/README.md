@@ -27,10 +27,3 @@ The **Crypto Arbitrage Calculator** is a web application that allows users to co
 - **APIs**: Fetches real-time prices from Binance, OKX, and Kraken APIs
 
 ## Folder Structure
- ├── app/ │ ├── page.tsx # Main page of the application │ ├── globals.css # Global styles ├── components/ │ ├── calculatorUi.tsx # UI component for the calculator (currently unused) ├── lib/ │ ├── actions/ │ ├── calculateProfite.ts # Functions for profit and profit percentage calculation │ ├── getBinancePrice.ts # Fetch Binance price │ ├── getOkxPrice.ts # Fetch OKX price │ ├── getKrakenPrice.ts # Fetch Kraken price ├── public/ │ ├── crypto-arbitrage.png # Image used in the UI ├── const.ts # Constants for fees and withdrawal costs ├── README.md # Project documentation
-## How to Run the Project
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/your-repo/crypto-arbitrage-calculator.git
-   cd crypto-arbitrage-calculator
