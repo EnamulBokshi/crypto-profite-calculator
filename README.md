@@ -32,5 +32,5 @@ The **Crypto Arbitrage Calculator** is a web application that allows users to co
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-repo/crypto-arbitrage-calculator.git
-   cd crypto-arbitrage-calculator
+   git clone https://github.com/EnamulBokshi/crypto-profite-calculator.git
+   cd crypto-profite-calculator
